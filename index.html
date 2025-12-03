@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>V-Tube — Search · Learn · Solve</title>
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <meta name="description" content="V-Tube — problem-focused video solutions. No fluff. High clarity." />
+  <style>
+    :root{
+      --bg-1: #070707;
+      --bg-2: #0f0f0f;
+      --accent: #FF9933;
+      --accent-2: #FF7A00;
+      --glass: rgba(255,153,51,0.06);
+      --muted: rgba(255,255,255,0.72);
+      --card-border: rgba(255,153,51,0.08);
+      --radius: 18px;
+      --safe-gap: 18px;
+    }
+    @media (prefers-reduced-motion: no-preference) {:root { --anim-speed: 280ms; }}
+    @media (prefers-reduced-motion: reduce) {:root { --anim-speed: 0ms; }}
+    html,body{height:100%}
+    body{
+      margin:0;min-height:100vh;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:
+        radial-gradient(1200px 600px at 10% 10%, rgba(255,153,51,0.02), transparent 8%),
+        linear-gradient(180deg,var(--bg-1),var(--bg-2));
+      color:#fff;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+      padding:env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 90px) 16px;
+      display:flex;align-items:flex-start;justify-content:center;
+    }
+    .shell{width:100%;max-width:920px;display:flex;flex-direction:column;gap:18px;margin:12px 0 36px;}
+    header.brand{display:flex;align-items:center;gap:12px;margin-top:8px;}
+    .logo-wrap{
+      width:64px;height:64px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 8px 30px rgba(255,153,51,0.08), inset 0 -6px 18px rgba(0,0,0,0.18);
+      flex-shrink:0;
+    }
+    .logo-wrap .V{font-weight:800;font-size:28px;color:#0b0b0b;letter-spacing:-1px}
+    .brand-text{display:flex;flex-direction:column;line-height:1;}
+    .brand-text .title{font-size:20px;font-weight:800;letter-spacing:-0.6px}
+    .brand-text .sub{font-size:12px;color:var(--muted);margin-top:2px}
+    main.card{
+      background:linear-gradient(180deg, rgba(255,153,51,0.02), rgba(255,153,51,0.01));
+      border-radius:var(--radius);padding:18px;border:1px solid var(--card-border);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.6);
+      display:flex;flex-direction:column;gap:16px;
+    }
+    .search {display:flex;gap:12px;align-items:center;}
+    .search .input-wrap{
+      flex:1;display:flex;align-items:center;background:rgba(255,255,255,0.02);
+      border-radius:100px;padding:10px 12px;border:1px solid rgba(255,153,51,0.06);
+      box-shadow: 0 8px 30px rgba(255,153,51,0.04);
+      transition:box-shadow var(--anim-speed) ease, transform var(--anim-speed) ease;
+    }
+    .input-wrap:focus-within{
+      box-shadow:0 20px 50px rgba(255,153,51,0.12);
+      transform:translateY(-3px);border-color: rgba(255,153,51,0.16);
+    }
+    .search input{
+      border:0;background:transparent;color:#fff;font-size:16px;padding:10px 8px;outline:none;width:100%;
+    }
+    .search .cta{
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      color:#060606;border:none;padding:12px 18px;border-radius:999px;font-weight:700;font-size:15px;
+      box-shadow:0 10px 30px rgba(255,153,51,0.18);cursor:pointer;flex-shrink:0;
+    }
+    .chips{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,153,51,0.05);border:1px solid rgba(255,153,51,0.08);
+      color:var(--muted);font-size:13px;cursor:pointer;transition:transform .18s ease}
+    .chip:active{transform:scale(.98)}
+    .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:6px}
+    .tile{
+      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      border-radius:12px;padding:14px;border:1px solid rgba(255,153,51,0.04);display:flex;gap:12px;align-items:center;
+      min-height:72px;
+    }
+    .tile .ico{font-size:20px;width:44px;height:44px;border-radius:10px;background:rgba(255,153,51,0.08);display:flex;align-items:center;justify-content:center}
+    .tile .text{font-size:14px}
+    .tile .text .t{font-weight:700;margin-bottom:4px}
+    .tile .text .s{color:var(--muted);font-size:13px}
+    .value{font-size:13px;color:var(--muted);text-align:center;padding-top:6px}
+    .bottom-toolbar{
+      position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom);display:flex;gap:12px;justify-content:center;padding:12px;
+      pointer-events:none;
+    }
+    .toolbar-inner{
+      width:calc(100% - 32px);max-width:920px;background:linear-gradient(90deg, rgba(255,153,51,0.03), rgba(255,153,51,0.01));
+      border-radius:14px;padding:8px 10px;display:flex;gap:8px;align-items:center;justify-content:space-between;border:1px solid var(--card-border);
+      pointer-events:all;box-shadow:0 18px 50px rgba(0,0,0,0.55);
+    }
+    .toolbar-inner button{background:transparent;border:0;color:var(--accent);font-weight:700;padding:10px 12px;border-radius:10px;cursor:pointer}
+    @media(min-width:700px){
+      body{padding:40px}.shell{margin-top:28px}.brand-text .title{font-size:26px}
+      .logo-wrap{width:80px;height:80px;border-radius:18px}.search input{font-size:18px}
+      .tiles{grid-template-columns:repeat(4,1fr)}
+    }
+    .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+  </style>
+</head>
+<body>
+  <div class="shell" role="main" aria-labelledby="brand">
+    <header class="brand" id="brand">
+      <div class="logo-wrap" aria-hidden="true"><div class="V">V</div></div>
+      <div class="brand-text">
+        <div class="title">V-Tube</div>
+        <div class="sub">Search · Learn · Solve — one problem per video</div>
+      </div>
+    </header>
+
+    <main class="card" aria-labelledby="searchlabel">
+      <h1 id="searchlabel" class="visually-hidden">Search V-Tube</h1>
+      <div class="search" role="search" aria-label="Search V-Tube">
+        <div class="input-wrap" aria-hidden="false">
+          <svg style="width:18px;height:18px;margin-right:8px;opacity:.95" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <input id="q" type="search" placeholder="Type your doubt, problem or concept…" aria-label="Search input" autocomplete="off" />
+        </div>
+        <button id="go" class="cta" aria-label="Search">Search</button>
+      </div>
+      <div class="chips" aria-hidden="false" role="list">
+        <div class="chip" role="listitem" data-q="Quadratic equations step by step">Quadratic equations</div>
+        <div class="chip" role="listitem" data-q="Organic chemistry mechanisms">Organic chemistry</div>
+        <div class="chip" role="listitem" data-q="Physics numerical problems">Physics numericals</div>
+      </div>
+      <div class="tiles" aria-hidden="false">
+        <div class="tile" role="button" tabindex="0" aria-pressed="false">
+          <div class="ico" aria-hidden="true">🎯</div>
+          <div class="text"><div class="t">Problem-focused</div><div class="s">Every video solves one problem only</div></div>
+        </div>
+        <div class="tile" role="button" tabindex="0" aria-pressed="false">
+          <div class="ico" aria-hidden="true">✨</div>
+          <div class="text"><div class="t">Zero clutter</div><div class="s">No feed, no distraction — straight learning</div></div>
+        </div>
+        <div class="tile" role="button" tabindex="0" aria-pressed="false">
+          <div class="ico" aria-hidden="true">🎓</div>
+          <div class="text"><div class="t">Expert creators</div><div class="s">Curated, high-quality solutions</div></div>
+        </div>
+        <div class="tile" role="button" tabindex="0" aria-pressed="false">
+          <div class="ico" aria-hidden="true">⚡</div>
+          <div class="text"><div class="t">Request videos</div><div class="s">Ask & get within 24 hours</div></div>
+        </div>
+      </div>
+      <div class="value">Value over views. Clarity over clickbait.</div>
+    </main>
+  </div>
+
+  <div class="bottom-toolbar" aria-hidden="false">
+    <div class="toolbar-inner" role="toolbar" aria-label="Quick actions">
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="installBtn" title="Install V-Tube">Install</button>
+        <button id="requestBtn" title="Request a video">Request</button>
+      </div>
+      <div style="color:var(--muted);font-size:13px">Tap to start learning</div>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('q');
+    const go = document.getElementById('go');
+    function doSearch(q){
+      q = (q || '').trim();
+      if(!q) { input.focus(); return; }
+      alert('Search: ' + q);
+    }
+    go.addEventListener('click', ()=> doSearch(input.value));
+    input.addEventListener('keydown', e => { if(e.key === 'Enter') doSearch(input.value); });
+    document.querySelectorAll('.chip').forEach(c => {
+      c.addEventListener('click', ()=> { input.value = c.dataset.q; input.focus(); });
+    });
+    document.querySelectorAll('.tile').forEach(t => {
+      t.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' ') t.click(); });
+      t.addEventListener('click', ()=> {
+        const title = t.querySelector('.t')?.textContent || 'Feature';
+        alert(title);
+      });
+    });
+
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    }
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    installBtn.style.display = 'none';
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-flex';
+    });
+    installBtn.addEventListener('click', async () => {
+      if(!deferredPrompt) { console.log('Install prompt not available'); return; }
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.style.display = 'none';
+      console.log('Install choice:', choice);
+    });
+
+    document.getElementById('requestBtn').addEventListener('click', () => {
+      alert('Request flow coming soon.');
+    });
+  </script>
+</body>
+</html>
